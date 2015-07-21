@@ -15,12 +15,12 @@ import java.util.List;
  * Created by Vishnuvathsasarma on 21-Jul-15.
  */
 public class WifiReceiver {
-    Context mContext;
-    OnWifiScanResultChangedListener listener;
-    WifiManager wifiManager;
-    BroadcastReceiver broadcastReceiver;
-    int size = 0;
-    List<ScanResult> results;
+    private Context mContext;
+    private OnWifiScanResultChangedListener listener;
+    private WifiManager wifiManager;
+    private BroadcastReceiver broadcastReceiver;
+    private int size = 0;
+    private List<ScanResult> results;
 
     public WifiReceiver(Context context) {
         mContext = context;
