@@ -1,9 +1,11 @@
 package com.aslan.locationsensor;
 
 import android.app.Activity;
-import android.location.Location;
+import android.app.ActivityManager;
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -12,54 +14,64 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
-    String ITEM_KEY = "SSID";
     List<String> wifiList = new ArrayList<>();
-    ArrayAdapter adapter;
+
+    private Intent serviceIntent;
+
     private TextView txtLocation;
     private TextView txtWifi;
-    private LocationReceiver locationReceiver;
-    private WifiReceiver wifiReceiver;
+    private Button btnStart;
+    private Button btnStop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         txtLocation = (TextView) findViewById(R.id.txtLocation);
-        locationReceiver = new LocationReceiver(this, 10, 1000);
-        locationReceiver.setOnLocationChangedListener(new OnLocationChangedListener() {
-
-            @Override
-            public void onLocationChanged(Location location) {
-                // Do whatever you want here
-                txtLocation.append("Lat: " + location.getLatitude() + "\nLon: "
-                        + location.getLongitude() + "\n");
-            }
-        });
-        locationReceiver.start();
-
         txtWifi = (TextView) findViewById(R.id.txtWifi);
-        wifiReceiver = new WifiReceiver(this);
-        wifiReceiver.setOnWifiScanResultChangedLsitener(new OnWifiScanResultChangedListener() {
+        btnStart = (Button) findViewById(R.id.btnStart);
+        btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onWifiScanResultsChanged(List<String> wifiList) {
-                MainActivity.this.wifiList = wifiList;
-                for (String wifi : wifiList) {
-                    txtWifi.append(wifi + "\n");
-                }
-//                adapter.notifyDataSetChanged();
+            public void onClick(View view) {
+                serviceIntent = new Intent(MainActivity.this, LocationTrackingService.class);
+                serviceIntent.addCategory(LocationTrackingService.TAG);
+                startService(serviceIntent);
+                btnStart.setEnabled(false);
+                btnStop.setEnabled(true);
             }
         });
-        wifiReceiver.start();
+        btnStop = (Button) findViewById(R.id.btnStop);
+        btnStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isMyServiceRunning()) {
+                    serviceIntent = new Intent(MainActivity.this, LocationTrackingService.class);
+                    serviceIntent.addCategory(LocationTrackingService.TAG);
+                    stopService(serviceIntent);
+                    btnStart.setEnabled(true);
+                    btnStop.setEnabled(false);
+                }
+            }
+        });
 
-//        adapter = new SimpleAdapter(this, wifiList, R.layout.row, new String[] { ITEM_KEY }, new int[] { R.id.list_value });
-//        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, wifiList);
-//        lvWifi.setAdapter(this.adapter);
+        if (LocationTrackingService.isIntentServiceRunning) {
+            btnStart.setEnabled(false);
+            btnStop.setEnabled(true);
+        }
     }
 
     @Override
     protected void onPause() {
-        locationReceiver.stop();
-        wifiReceiver.stop();
         super.onPause();
+    }
+
+    private boolean isMyServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if ("com.aslan.locationsensor.LocationTrackingService".equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

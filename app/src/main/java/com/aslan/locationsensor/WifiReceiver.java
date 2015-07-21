@@ -88,6 +88,7 @@ public class WifiReceiver {
             if (size == 0) {
                 Toast.makeText(mContext.getApplicationContext(), "something wrong", Toast.LENGTH_LONG).show();
             } else {
+                wifiList.clear();
                 int i = size - 1;
                 while (i >= 0) {
 //                    HashMap<String, String> item = new HashMap<String, String>();
