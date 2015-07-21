@@ -8,13 +8,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class MainActivity extends Activity {
 
-    List<String> wifiList = new ArrayList<>();
+    private final String MIN_DISTANCE_CHANGE = "distance";
+    private final String TIME_INTERVAL = "time";
+    // The minimum distance to change location Updates in meters
+    private long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10L;
+    // The minimum time between location updates in milliseconds
+    private long MIN_TIME_BW_UPDATES = 1000L;
 
     private Intent serviceIntent;
 
@@ -34,6 +36,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
                 serviceIntent = new Intent(MainActivity.this, LocationTrackingService.class);
+                serviceIntent.putExtra(MIN_DISTANCE_CHANGE, MIN_DISTANCE_CHANGE_FOR_UPDATES);
+                serviceIntent.putExtra(TIME_INTERVAL, MIN_TIME_BW_UPDATES);
                 serviceIntent.addCategory(LocationTrackingService.TAG);
                 startService(serviceIntent);
                 btnStart.setEnabled(false);

@@ -3,6 +3,7 @@ package com.aslan.locationsensor;
 import android.app.IntentService;
 import android.content.Intent;
 import android.location.Location;
+import android.net.wifi.ScanResult;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -20,9 +21,9 @@ public class LocationTrackingService extends IntentService {
     private final String MIN_DISTANCE_CHANGE = "distance";
     private final String TIME_INTERVAL = "time";
     // The minimum distance to change location Updates in meters
-    private long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10L;
+    private long MIN_DISTANCE_CHANGE_FOR_UPDATES;
     // The minimum time between location updates in milliseconds
-    private long MIN_TIME_BW_UPDATES = 1000L;
+    private long MIN_TIME_BW_UPDATES;
     private LocationReceiver locationReceiver;
     private WifiReceiver wifiReceiver;
 
@@ -45,6 +46,7 @@ public class LocationTrackingService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
+
         startLocationTracking();
         startWifiTracking();
     }
@@ -69,13 +71,14 @@ public class LocationTrackingService extends IntentService {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         isIntentServiceRunning = false;
-        stopSelf();
         locationReceiver.stop();
         wifiReceiver.stop();
+        stopSelf();
         Log.e("<<Tracking-onDestroy>>", "I am DESTROYED");
         Toast.makeText(getApplicationContext(), "DESTROYED", Toast.LENGTH_SHORT).show();
+
+        super.onDestroy();
     }
 
     @Override
@@ -97,13 +100,9 @@ public class LocationTrackingService extends IntentService {
 
             @Override
             public void onLocationChanged(Location location) {
-                // Do whatever you want here
-                Log.d("LOCATION", "Lat: " + location.getLatitude() + ", Lon: "
-                        + location.getLongitude());
-                Toast.makeText(getApplicationContext(), "Lat: " + location.getLatitude() + "\nLon: "
-                        + location.getLongitude(), Toast.LENGTH_SHORT).show();
-//                    txtLocation.append("Lat: " + location.getLatitude() + "\nLon: "
-//                            + location.getLongitude() + "\n");
+                String loc = "" + location.toString();
+                Log.d("LOCATION", loc);
+                Toast.makeText(getApplicationContext(), loc, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -112,13 +111,11 @@ public class LocationTrackingService extends IntentService {
         wifiReceiver = new WifiReceiver(this);
         wifiReceiver.setOnWifiScanResultChangedLsitener(new OnWifiScanResultChangedListener() {
             @Override
-            public void onWifiScanResultsChanged(List<String> wifiList) {
-                for (String wifi : wifiList) {
-                    Log.d("WIFI", wifi);
-                    Toast.makeText(getApplicationContext(), wifi, Toast.LENGTH_SHORT).show();
-//                        txtWifi.append(wifi + "\n");
+            public void onWifiScanResultsChanged(List<ScanResult> wifiList) {
+                for (ScanResult wifi : wifiList) {
+                    Log.d("WIFI", wifi.toString());
+                    Toast.makeText(getApplicationContext(), wifi.toString(), Toast.LENGTH_SHORT).show();
                 }
-//                adapter.notifyDataSetChanged();
             }
         });
     }
