@@ -29,27 +29,30 @@ public class WifiReceiver {
     public void start() {
         wifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
         if (!wifiManager.isWifiEnabled()) {
-            Toast.makeText(mContext.getApplicationContext(), "wifi is disabled..making it enabled", Toast.LENGTH_LONG).show();
-            wifiManager.setWifiEnabled(true);
-        }
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context c, Intent intent) {
-                results = wifiManager.getScanResults();
-                if (results != null) {
-                    size = results.size();
-                    onResult();
+            Log.d("WIFI", "Wi-Fi is disabled..\nEnable it and restart the app to get Wi-Fi updates");
+            Toast.makeText(mContext.getApplicationContext(), "Wi-Fi is disabled..\nEnable it and restart the app to get Wi-Fi updates", Toast.LENGTH_LONG).show();
+//            wifiManager.setWifiEnabled(true);
+        } else {
+            broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context c, Intent intent) {
+                    results = wifiManager.getScanResults();
+                    if (results != null) {
+                        size = results.size();
+                        onResult();
+                    }
                 }
-            }
-        };
-        mContext.registerReceiver(broadcastReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-        wifiManager.startScan();
+            };
+            mContext.registerReceiver(broadcastReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+            wifiManager.startScan();
+        }
     }
 
     public void onResult() {
-        Toast.makeText(mContext, "Scanning.... " + size, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(mContext, "Scanning.... " + size, Toast.LENGTH_SHORT).show();
+        Log.d("WIFI", "Scanning.... " + size);
         if (size == 0) {
-            Toast.makeText(mContext.getApplicationContext(), "NOTHING FOUND", Toast.LENGTH_LONG).show();
+//            Toast.makeText(mContext.getApplicationContext(), "NOTHING FOUND", Toast.LENGTH_LONG).show();
             Log.d("WIFI", "NOTHING FOUND");
         } else {
             listener.onWifiScanResultsChanged(results);
@@ -57,7 +60,9 @@ public class WifiReceiver {
     }
 
     public void stop() {
-        mContext.unregisterReceiver(broadcastReceiver);
+        if (broadcastReceiver != null) {
+            mContext.unregisterReceiver(broadcastReceiver);
+        }
     }
 
     public void setOnWifiScanResultChangedLsitener(OnWifiScanResultChangedListener listener) {

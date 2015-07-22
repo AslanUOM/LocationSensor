@@ -69,6 +69,7 @@ public class LocationTrackingService extends IntentService {
         locationReceiver.start();
         wifiReceiver.start();
         Log.e("<<Tracking-onStart>>", "I am alive");
+        Toast.makeText(getApplicationContext(), "STARTED", Toast.LENGTH_SHORT).show();
 
         return super.onStartCommand(intent, START_STICKY, startId);
     }
@@ -107,7 +108,7 @@ public class LocationTrackingService extends IntentService {
                 if (dbHelper.insertLocation(location)) {
                     String loc = "" + location.toString();
                     Log.d("LOCATION", loc);
-                    Toast.makeText(getApplicationContext(), loc, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), loc, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -123,7 +124,7 @@ public class LocationTrackingService extends IntentService {
                 for (ScanResult wifi : wifiList) {
                     if (dbHelper.insertWifi(wifi, timestamp.toString())) {
                         Log.d("WIFI", wifi.toString());
-                        Toast.makeText(getApplicationContext(), wifi.toString(), Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplicationContext(), wifi.toString(), Toast.LENGTH_SHORT).show();
                     }
                 }
             }

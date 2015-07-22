@@ -17,14 +17,14 @@ public class MainActivity extends Activity {
 
     private final String MIN_DISTANCE_CHANGE = "distance";
     private final String TIME_INTERVAL = "time";
-    private DatabaseHelper dbHelper;
     // The minimum distance to change location Updates in meters
-    private long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10L;
+    private final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10L;
     // The minimum time between location updates in milliseconds
-    private long MIN_TIME_BW_UPDATES = 1000L;
-
+    private final long MIN_TIME_BW_UPDATES = 1800000L;
+    //no of rows to load from sqlite
+    private final int MAX_ROW_SIZE = 10;
+    private DatabaseHelper dbHelper;
     private Intent serviceIntent;
-
     private TextView txtLocation;
     private TextView txtWifi;
     private ListView lvLocation;
@@ -38,8 +38,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         dbHelper = new DatabaseHelper(this);
-        List<String> location_list = dbHelper.getAllLocations();
-        List<String> wifi_list = dbHelper.getAllWifi();
+        List<String> location_list = dbHelper.getRecentLocations(MAX_ROW_SIZE);
+        List<String> wifi_list = dbHelper.getRecentWifi(MAX_ROW_SIZE);
         ArrayAdapter location_arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, location_list);
         ArrayAdapter wifi_arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, wifi_list);
         lvLocation = (ListView) findViewById(R.id.lvLocation);
@@ -48,9 +48,9 @@ public class MainActivity extends Activity {
         lvWifi.setAdapter(wifi_arrayAdapter);
 
         txtLocation = (TextView) findViewById(R.id.txtLocation);
-        txtLocation.setText("Rows: " + dbHelper.getNumberOfLocationRows());
+        txtLocation.setText("Total Rows: " + dbHelper.getNumberOfLocationRows());
         txtWifi = (TextView) findViewById(R.id.txtWifi);
-        txtWifi.setText("Rows: " + dbHelper.getNumberOfWifiRows());
+        txtWifi.setText("Total Rows: " + dbHelper.getNumberOfWifiRows());
 
         btnStart = (Button) findViewById(R.id.btnStart);
         btnStart.setOnClickListener(new View.OnClickListener() {

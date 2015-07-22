@@ -36,7 +36,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String WIFI_COLUMN_CAPABILITIES = "Capabilities";
     public static final String WIFI_COLUMN_LEVEL = "Level";
     public static final String WIFI_COLUMN_FREQUENCY = "Frequency";
-    private final String CREATE_LOCATION_TABLE = "create table "
+    private final String CREATE_LOCATION_TABLE = "CREATE TABLE "
             + LOCATION_TABLE_NAME
             + " ("
             + LOCATION_COLUMN_TIME
@@ -55,7 +55,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + " text, "
             + LOCATION_COLUMN_ACCURACY
             + " text)";
-    private final String CREATE_WIFI_TABLE = "create table "
+    private final String CREATE_WIFI_TABLE = "CREATE TABLE "
             + WIFI_TABLE_NAME
             + " ("
             + WIFI_COLUMN_TIME
@@ -154,11 +154,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //                new String[] { Integer.toString(id) });
 //    }
 
-    public List<String> getAllLocations() {
+    public List<String> getRecentLocations(int length) {
         List<String> array_list = new ArrayList<>();
         //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from " + LOCATION_TABLE_NAME, null);
+        Cursor res = db.rawQuery("SELECT * FROM " + LOCATION_TABLE_NAME
+                + " ORDER BY " + LOCATION_COLUMN_TIME
+                + " DESC LIMIT " + length, null);
         res.moveToFirst();
         while (!res.isAfterLast()) {
             array_list.add(res.getString(res.getColumnIndex(LOCATION_COLUMN_LATITUDE))
@@ -169,11 +171,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return array_list;
     }
 
+    public List<String> getRecentWifi(int length) {
+        List<String> array_list = new ArrayList<>();
+        //hp = new HashMap();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM " + WIFI_TABLE_NAME
+                + " ORDER BY " + WIFI_COLUMN_TIME
+                + " DESC LIMIT " + length, null);
+        res.moveToFirst();
+        while (!res.isAfterLast()) {
+            array_list.add(res.getString(res.getColumnIndex(WIFI_COLUMN_SSID)) + ", " + res.getString(res.getColumnIndex(WIFI_COLUMN_BSSID)) + ", " + res.getString(res.getColumnIndex(WIFI_COLUMN_TIME)));
+            res.moveToNext();
+        }
+        return array_list;
+    }
+
+    public List<String> getAllLocations() {
+        List<String> array_list = new ArrayList<>();
+        //hp = new HashMap();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM " + LOCATION_TABLE_NAME, null);
+        res.moveToFirst();
+        while (!res.isAfterLast()) {
+            array_list.add(res.getString(res.getColumnIndex(LOCATION_COLUMN_LATITUDE))
+                    + ", " + res.getString(res.getColumnIndex(LOCATION_COLUMN_LONGITUDE))
+                    + ", " + res.getString(res.getColumnIndex(LOCATION_COLUMN_TIME)));
+            res.moveToNext();
+        }
+        return array_list;
+    }
     public List<String> getAllWifi() {
         List<String> array_list = new ArrayList<>();
         //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from " + WIFI_TABLE_NAME, null);
+        Cursor res = db.rawQuery("SELECT * FROM " + WIFI_TABLE_NAME, null);
         res.moveToFirst();
         while (!res.isAfterLast()) {
             array_list.add(res.getString(res.getColumnIndex(WIFI_COLUMN_SSID)) + ", " + res.getString(res.getColumnIndex(WIFI_COLUMN_BSSID)) + ", " + res.getString(res.getColumnIndex(WIFI_COLUMN_TIME)));
