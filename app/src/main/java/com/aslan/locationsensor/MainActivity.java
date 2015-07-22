@@ -5,14 +5,19 @@ import android.app.ActivityManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.List;
 
 
 public class MainActivity extends Activity {
 
     private final String MIN_DISTANCE_CHANGE = "distance";
     private final String TIME_INTERVAL = "time";
+    private DatabaseHelper dbHelper;
     // The minimum distance to change location Updates in meters
     private long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10L;
     // The minimum time between location updates in milliseconds
@@ -22,6 +27,8 @@ public class MainActivity extends Activity {
 
     private TextView txtLocation;
     private TextView txtWifi;
+    private ListView lvLocation;
+    private ListView lvWifi;
     private Button btnStart;
     private Button btnStop;
 
@@ -29,8 +36,22 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dbHelper = new DatabaseHelper(this);
+        List<String> location_list = dbHelper.getAllLocations();
+        List<String> wifi_list = dbHelper.getAllWifi();
+        ArrayAdapter location_arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, location_list);
+        ArrayAdapter wifi_arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, wifi_list);
+        lvLocation = (ListView) findViewById(R.id.lvLocation);
+        lvLocation.setAdapter(location_arrayAdapter);
+        lvWifi = (ListView) findViewById(R.id.lvWifi);
+        lvWifi.setAdapter(wifi_arrayAdapter);
+
         txtLocation = (TextView) findViewById(R.id.txtLocation);
+        txtLocation.setText("Rows: " + dbHelper.getNumberOfLocationRows());
         txtWifi = (TextView) findViewById(R.id.txtWifi);
+        txtWifi.setText("Rows: " + dbHelper.getNumberOfWifiRows());
+
         btnStart = (Button) findViewById(R.id.btnStart);
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override

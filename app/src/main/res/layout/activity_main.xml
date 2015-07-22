@@ -10,33 +10,45 @@
     android:weightSum="100"
     tools:context=".MainActivity">
 
-    <ScrollView
+    <TextView
+        android:id="@+id/txtLocation"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="42">
+        android:layout_weight="5" />
 
-        <TextView
-            android:id="@+id/txtLocation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </ScrollView>
-
-    <ScrollView
+    <ListView
+        android:id="@+id/lvLocation"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="42">
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="5dp"
+        android:layout_weight="37"
+        android:padding="5dp" />
 
-        <TextView
-            android:id="@+id/txtWifi"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </ScrollView>
+    <TextView
+        android:id="@+id/txtWifi"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5" />
+
+    <ListView
+        android:id="@+id/lvWifi"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="5dp"
+        android:layout_weight="37"
+        android:padding="5dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_margin="5dp"
         android:layout_weight="16"
         android:orientation="horizontal"
+        android:padding="5dp"
         android:weightSum="100">
 
         <Button

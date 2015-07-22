@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -20,6 +21,7 @@ public class LocationTrackingService extends IntentService {
     public static boolean isIntentServiceRunning = false;
     private final String MIN_DISTANCE_CHANGE = "distance";
     private final String TIME_INTERVAL = "time";
+    private DatabaseHelper dbHelper;
     // The minimum distance to change location Updates in meters
     private long MIN_DISTANCE_CHANGE_FOR_UPDATES;
     // The minimum time between location updates in milliseconds
@@ -46,6 +48,8 @@ public class LocationTrackingService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        dbHelper = new DatabaseHelper(this);
 
         startLocationTracking();
         startWifiTracking();
@@ -100,9 +104,11 @@ public class LocationTrackingService extends IntentService {
 
             @Override
             public void onLocationChanged(Location location) {
-                String loc = "" + location.toString();
-                Log.d("LOCATION", loc);
-                Toast.makeText(getApplicationContext(), loc, Toast.LENGTH_SHORT).show();
+                if (dbHelper.insertLocation(location)) {
+                    String loc = "" + location.toString();
+                    Log.d("LOCATION", loc);
+                    Toast.makeText(getApplicationContext(), loc, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -112,9 +118,13 @@ public class LocationTrackingService extends IntentService {
         wifiReceiver.setOnWifiScanResultChangedLsitener(new OnWifiScanResultChangedListener() {
             @Override
             public void onWifiScanResultsChanged(List<ScanResult> wifiList) {
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                Log.e("TIME", timestamp.toString());
                 for (ScanResult wifi : wifiList) {
-                    Log.d("WIFI", wifi.toString());
-                    Toast.makeText(getApplicationContext(), wifi.toString(), Toast.LENGTH_SHORT).show();
+                    if (dbHelper.insertWifi(wifi, timestamp.toString())) {
+                        Log.d("WIFI", wifi.toString());
+                        Toast.makeText(getApplicationContext(), wifi.toString(), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
