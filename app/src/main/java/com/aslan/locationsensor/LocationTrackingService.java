@@ -23,7 +23,7 @@ public class LocationTrackingService extends IntentService {
     // The minimum distance to change location Updates in meters
     private final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10L;
     // The minimum time between location updates in milliseconds
-    private final long MIN_TIME_BW_UPDATES = 18000000L;
+    private final long MIN_TIME_BW_UPDATES = 1800000L;
     private DatabaseHelper dbHelper;
     private LocationReceiver locationReceiver;
     private WifiReceiver wifiReceiver;
@@ -55,16 +55,17 @@ public class LocationTrackingService extends IntentService {
         onHandleIntent(intent);
         locationReceiver.start();
         wifiReceiver.start();
-        Log.e("<<Tracking-onStart>>", "I am alive");
+        Log.d("<<Tracking-onStart>>", "I am alive");
+        Toast.makeText(getApplicationContext(), "STARTED", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        onHandleIntent(intent);
-        locationReceiver.start();
-        wifiReceiver.start();
-        Log.e("<<Tracking-onStart>>", "I am alive");
-        Toast.makeText(getApplicationContext(), "STARTED", Toast.LENGTH_SHORT).show();
+//        onHandleIntent(intent);
+//        locationReceiver.start();
+//        wifiReceiver.start();
+//        Log.d("<<Tracking-onStart>>", "I am alive");
+//        Toast.makeText(getApplicationContext(), "STARTED", Toast.LENGTH_SHORT).show();
         super.onStartCommand(intent, START_STICKY, startId);
         return START_STICKY;
     }

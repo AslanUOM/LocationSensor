@@ -163,7 +163,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + " DESC LIMIT " + length, null);
         res.moveToFirst();
         while (!res.isAfterLast()) {
-            array_list.add(res.getString(res.getColumnIndex(LOCATION_COLUMN_LATITUDE))
+            array_list.add(res.getString(res.getColumnIndex(LOCATION_COLUMN_PROVIDER))
+                    + ", " + res.getString(res.getColumnIndex(LOCATION_COLUMN_LATITUDE))
                     + ", " + res.getString(res.getColumnIndex(LOCATION_COLUMN_LONGITUDE))
                     + ", " + res.getString(res.getColumnIndex(LOCATION_COLUMN_TIME)));
             res.moveToNext();
@@ -193,7 +194,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor res = db.rawQuery("SELECT * FROM " + LOCATION_TABLE_NAME, null);
         res.moveToFirst();
         while (!res.isAfterLast()) {
-            array_list.add(res.getString(res.getColumnIndex(LOCATION_COLUMN_LATITUDE))
+            array_list.add(res.getString(res.getColumnIndex(LOCATION_COLUMN_PROVIDER))
+                    + ", " + res.getString(res.getColumnIndex(LOCATION_COLUMN_LATITUDE))
                     + ", " + res.getString(res.getColumnIndex(LOCATION_COLUMN_LONGITUDE))
                     + ", " + res.getString(res.getColumnIndex(LOCATION_COLUMN_TIME)));
             res.moveToNext();
