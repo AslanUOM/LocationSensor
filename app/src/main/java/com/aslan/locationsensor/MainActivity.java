@@ -14,13 +14,6 @@ import java.util.List;
 
 
 public class MainActivity extends Activity {
-
-    private final String MIN_DISTANCE_CHANGE = "distance";
-    private final String TIME_INTERVAL = "time";
-    // The minimum distance to change location Updates in meters
-    private final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10L;
-    // The minimum time between location updates in milliseconds
-    private final long MIN_TIME_BW_UPDATES = 1800000L;
     //no of rows to load from sqlite
     private final int MAX_ROW_SIZE = 10;
     private DatabaseHelper dbHelper;
@@ -57,8 +50,6 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
                 serviceIntent = new Intent(MainActivity.this, LocationTrackingService.class);
-                serviceIntent.putExtra(MIN_DISTANCE_CHANGE, MIN_DISTANCE_CHANGE_FOR_UPDATES);
-                serviceIntent.putExtra(TIME_INTERVAL, MIN_TIME_BW_UPDATES);
                 serviceIntent.addCategory(LocationTrackingService.TAG);
                 startService(serviceIntent);
                 btnStart.setEnabled(false);
@@ -79,7 +70,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        if (LocationTrackingService.isIntentServiceRunning) {
+        if (isMyServiceRunning()) {
             btnStart.setEnabled(false);
             btnStop.setEnabled(true);
         }
