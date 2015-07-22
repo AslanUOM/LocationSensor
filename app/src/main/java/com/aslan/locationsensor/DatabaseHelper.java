@@ -101,6 +101,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(LOCATION_COLUMN_BEARING, location.getBearing());
         contentValues.put(LOCATION_COLUMN_ACCURACY, location.getAccuracy());
         db.insert(LOCATION_TABLE_NAME, null, contentValues);
+        db.close();
         return true;
     }
 
@@ -114,6 +115,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(WIFI_COLUMN_LEVEL, scanResult.level);
         contentValues.put(WIFI_COLUMN_FREQUENCY, scanResult.frequency);
         db.insert(WIFI_TABLE_NAME, null, contentValues);
+        db.close();
         return true;
     }
 
@@ -125,12 +127,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public int getNumberOfLocationRows() {
         SQLiteDatabase db = this.getReadableDatabase();
-        return (int) DatabaseUtils.queryNumEntries(db, LOCATION_TABLE_NAME);
+        int rows = (int) DatabaseUtils.queryNumEntries(db, LOCATION_TABLE_NAME);
+        db.close();
+        return rows;
     }
 
     public int getNumberOfWifiRows() {
         SQLiteDatabase db = this.getReadableDatabase();
-        return (int) DatabaseUtils.queryNumEntries(db, WIFI_TABLE_NAME);
+        int rows = (int) DatabaseUtils.queryNumEntries(db, WIFI_TABLE_NAME);
+        db.close();
+        return rows;
     }
 
 //    public boolean updateContact (Integer id, String name, String phone, String email, String street,String place)
@@ -169,6 +175,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + ", " + res.getString(res.getColumnIndex(LOCATION_COLUMN_TIME)));
             res.moveToNext();
         }
+        res.close();
+        db.close();
         return array_list;
     }
 
@@ -184,6 +192,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             array_list.add(res.getString(res.getColumnIndex(WIFI_COLUMN_SSID)) + ", " + res.getString(res.getColumnIndex(WIFI_COLUMN_BSSID)) + ", " + res.getString(res.getColumnIndex(WIFI_COLUMN_TIME)));
             res.moveToNext();
         }
+        res.close();
+        db.close();
         return array_list;
     }
 
@@ -200,6 +210,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + ", " + res.getString(res.getColumnIndex(LOCATION_COLUMN_TIME)));
             res.moveToNext();
         }
+        res.close();
+        db.close();
         return array_list;
     }
     public List<String> getAllWifi() {
@@ -212,6 +224,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             array_list.add(res.getString(res.getColumnIndex(WIFI_COLUMN_SSID)) + ", " + res.getString(res.getColumnIndex(WIFI_COLUMN_BSSID)) + ", " + res.getString(res.getColumnIndex(WIFI_COLUMN_TIME)));
             res.moveToNext();
         }
+        res.close();
+        db.close();
         return array_list;
     }
 }
