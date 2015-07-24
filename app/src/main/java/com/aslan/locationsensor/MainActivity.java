@@ -34,8 +34,12 @@ public class MainActivity extends Activity {
         dbHelper = new DatabaseHelper(this);
         List<String> location_list = dbHelper.getRecentLocations(MAX_ROW_SIZE);
         List<String> wifi_list = dbHelper.getRecentWifi(MAX_ROW_SIZE);
-        ArrayAdapter location_arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, location_list);
-        ArrayAdapter wifi_arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, wifi_list);
+
+        ArrayAdapter<String> location_arrayAdapter;
+        location_arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, location_list);
+        ArrayAdapter<String> wifi_arrayAdapter;
+        wifi_arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, wifi_list);
+
         lvLocation = (ListView) findViewById(R.id.lvLocation);
         lvLocation.setAdapter(location_arrayAdapter);
         lvWifi = (ListView) findViewById(R.id.lvWifi);
