@@ -28,7 +28,8 @@ public class LocationTrackingService extends IntentService {
     //    private final long TIME_INTERVAL = 1800000L;
     private DatabaseHelper dbHelper;
     private LocationReceiver locationReceiver;
-    private Location lastLocation;
+    private Location currentBestLocation;
+    private int counter = 0;
     private WifiReceiver wifiReceiver;
 
     private Intent intent;
@@ -105,14 +106,21 @@ public class LocationTrackingService extends IntentService {
 
             @Override
             public void onLocationChanged(Location location) {
-                if (locationReceiver.isBetterLocation(location, lastLocation)) {
-                    if (dbHelper.insertLocation(location)) {
-                        lastLocation = location;
-                        String loc = "" + location.toString();
-                        Log.d("LOCATION", loc);
-                        locationReceiver.stop();
-                    }
+                if (counter < 5) {
+                    Log.d("Counter: " + counter, location.toString());
+                    if (locationReceiver.isBetterLocation(location, currentBestLocation)) {
+                        currentBestLocation = location;
+                        counter ++;
+                        if (counter == 5) {
+                            counter = 0;
+                            if (dbHelper.insertLocation(currentBestLocation)) {
+                                String loc = currentBestLocation.toString();
+                                Log.d("LOCATION", loc);
+                                locationReceiver.stop();
+                            }
 //                    Toast.makeText(getApplicationContext(), loc, Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 }
             }
         });
