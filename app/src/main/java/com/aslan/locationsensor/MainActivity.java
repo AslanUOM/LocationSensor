@@ -24,6 +24,7 @@ public class MainActivity extends Activity {
     private ListView lvWifi;
     private Button btnStart;
     private Button btnStop;
+    private Button btnExportToSD;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class MainActivity extends Activity {
                 startService(serviceIntent);
                 btnStart.setEnabled(false);
                 btnStop.setEnabled(true);
+                btnExportToSD.setEnabled(false);
             }
         });
         btnStop = (Button) findViewById(R.id.btnStop);
@@ -66,13 +68,22 @@ public class MainActivity extends Activity {
                     stopService(serviceIntent);
                     btnStart.setEnabled(true);
                     btnStop.setEnabled(false);
+                    btnExportToSD.setEnabled(true);
                 }
+            }
+        });
+        btnExportToSD = (Button) findViewById(R.id.btnExportToSD);
+        btnExportToSD.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dbHelper.exportToSdCard(getApplicationContext());
             }
         });
 
         if (isMyServiceRunning()) {
             btnStart.setEnabled(false);
             btnStop.setEnabled(true);
+            btnExportToSD.setEnabled(false);
         }
     }
 

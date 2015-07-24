@@ -8,7 +8,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
 import android.net.wifi.ScanResult;
+import android.os.AsyncTask;
+import android.os.Environment;
+import android.util.Log;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -227,5 +235,59 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         res.close();
         db.close();
         return array_list;
+    }
+
+    public void exportToSdCard(Context ctx) {
+        AsyncTask<Context, Boolean, Boolean> asyncTask = new AsyncTask<Context, Boolean, Boolean>() {
+            Context ctx;
+
+            @Override
+            protected Boolean doInBackground(Context... params) {
+                ctx = params[0];
+                return exportToSdCard(ctx.getDatabasePath(DATABASE_NAME).toString());
+//                return exportToSdCard(ctx.getDatabasePath(DATABASE_NAME).toString());
+            }
+
+            @Override
+            protected void onPostExecute(Boolean aBoolean) {
+                super.onPostExecute(aBoolean);
+                if (aBoolean) {
+                    Toast.makeText(ctx, "Exported", Toast.LENGTH_SHORT).show();
+                    Log.d("Path", Environment.getExternalStorageDirectory().getPath());
+                }
+            }
+        };
+        asyncTask.execute(ctx);
+    }
+    public boolean exportToSdCard(String currentDBPath) {
+        boolean isExported = false;
+        try {
+            File sd = Environment.getExternalStorageDirectory();
+
+            if (sd.canWrite()) {
+                String backupDBPath;
+                File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/FYP/");
+                dir.mkdirs();
+                if (dir.isDirectory()) {
+                    backupDBPath = Environment.getExternalStorageDirectory().getPath() + "/FYP/location_db_dump_" + new Timestamp(System.currentTimeMillis()).toString() + ".db";
+                } else {
+                    backupDBPath = Environment.getExternalStorageDirectory().getPath() + "/location_db_dump_" + new Timestamp(System.currentTimeMillis()).toString() + ".db";
+                }
+                File currentDB = new File(currentDBPath);
+                File backupDB = new File(backupDBPath);
+
+                if (currentDB.exists()) {
+                    FileChannel src = new FileInputStream(currentDB).getChannel();
+                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    isExported = true;
+                    src.close();
+                    dst.close();
+                }
+            }
+        } catch (Exception e) {
+            isExported = false;
+        }
+        return isExported;
     }
 }

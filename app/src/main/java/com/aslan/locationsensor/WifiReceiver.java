@@ -60,7 +60,7 @@ public class WifiReceiver {
     }
 
     public void stop() {
-        if (broadcastReceiver != null) {
+        if (broadcastReceiver != null ) {
             mContext.unregisterReceiver(broadcastReceiver);
         }
     }
