@@ -32,7 +32,7 @@ Thumbs.db
 
 # Android Studio
 *.iml
-#.idea
+.idea/
 #.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
 # Intellij IDEA (see https://intellij-support.jetbrains.com/entries/23393067)
 .idea/workspace.xml
