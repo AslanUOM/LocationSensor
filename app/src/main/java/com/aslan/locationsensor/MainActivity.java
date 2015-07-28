@@ -96,6 +96,25 @@ public class MainActivity extends Activity {
         super.onPause();
     }
 
+    @Override
+    protected void onResume() {
+        List<String> location_list = dbHelper.getRecentLocations(MAX_ROW_SIZE);
+        List<String> wifi_list = dbHelper.getRecentWifi(MAX_ROW_SIZE);
+
+        ArrayAdapter<String> location_arrayAdapter;
+        location_arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, location_list);
+        ArrayAdapter<String> wifi_arrayAdapter;
+        wifi_arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, wifi_list);
+
+        lvLocation.setAdapter(location_arrayAdapter);
+        lvWifi.setAdapter(wifi_arrayAdapter);
+
+        txtLocation.setText("Total Rows: " + dbHelper.getNumberOfLocationRows());
+        txtWifi.setText("Total Rows: " + dbHelper.getNumberOfWifiRows());
+
+        super.onResume();
+    }
+
     private boolean isMyServiceRunning() {
         ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
