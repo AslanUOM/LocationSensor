@@ -44,6 +44,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String WIFI_COLUMN_CAPABILITIES = "Capabilities";
     public static final String WIFI_COLUMN_LEVEL = "Level";
     public static final String WIFI_COLUMN_FREQUENCY = "Frequency";
+    //Table to store user,device registration data for NodeGrid and GCM push
+    public static final String REGISTRATION_TABLE_NAME = "RegData";
+    public static final String REGISTRATION_COLUMN_KEY = "Key";
+    public static final String REGISTRATION_COLUMN_VALUE = "Value";
     private final String CREATE_LOCATION_TABLE = "CREATE TABLE "
             + LOCATION_TABLE_NAME
             + " ("
@@ -78,20 +82,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + " text, "
             + WIFI_COLUMN_FREQUENCY
             + " text)";
+    private final String CREATE_REGISTRATION_TABLE = "CREATE TABLE "
+            + REGISTRATION_TABLE_NAME
+            + " ("
+            + REGISTRATION_COLUMN_KEY
+            + " text, "
+            + REGISTRATION_COLUMN_VALUE
+            + " text)";
 
 
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 1);
+        super(context, DATABASE_NAME, null, 3);
     }
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(CREATE_LOCATION_TABLE);
         sqLiteDatabase.execSQL(CREATE_WIFI_TABLE);
+        sqLiteDatabase.execSQL(CREATE_REGISTRATION_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+//        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + REGISTRATION_TABLE_NAME);
+        sqLiteDatabase.execSQL(CREATE_REGISTRATION_TABLE);
 //        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + LOCATION_TABLE_NAME);
 //        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + WIFI_TABLE_NAME);
 //        onCreate(sqLiteDatabase);
@@ -125,6 +139,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert(WIFI_TABLE_NAME, null, contentValues);
         db.close();
         return true;
+    }
+
+    public boolean insertRegData(String key, String value) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(REGISTRATION_COLUMN_KEY, key);
+        contentValues.put(REGISTRATION_COLUMN_VALUE, value);
+        db.insert(REGISTRATION_TABLE_NAME, null, contentValues);
+        db.close();
+        return true;
+    }
+
+    public String getRegData(String key) {
+        String value;
+        //hp = new HashMap();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT " + REGISTRATION_COLUMN_KEY + "," + REGISTRATION_COLUMN_VALUE
+                + " FROM " + REGISTRATION_TABLE_NAME
+                + " WHERE " + REGISTRATION_COLUMN_KEY + "='" + key + "'", null);
+        res.moveToFirst();
+        try {
+            value = res.getString(res.getColumnIndex(REGISTRATION_COLUMN_VALUE));
+        } catch (Exception re) {
+            value = null;
+        }
+        res.close();
+        db.close();
+        return value;
     }
 
 //    public Cursor getData(int id){

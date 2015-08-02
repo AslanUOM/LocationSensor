@@ -16,7 +16,21 @@ import java.util.List;
 public class MainActivity extends Activity {
     //no of rows to load from sqlite
     private final int MAX_ROW_SIZE = 10;
+    private final String KEY_NAME = "name";
+    private final String VALUE_NAME = "Vishnu";
+    private final String KEY_USERNAME = "username";
+    private final String VALUE_USERNAME = "vishnu24";
+    private final String KEY_PWD = "password";
+    private final String VALUE_PWD = "1234";
     private DatabaseHelper dbHelper;
+    //    private final String KEY_ID_USER = "_id";
+//    private final String KEY_TOKEN_ACCESS = "accessToken";
+//    private final String KEY_RELATION_HAS = "has";
+//    private final String KEY_DEVICE = "name";
+//    private final String KEY_ID_DEVICE = "dname";
+//    private final String KEY_DEVICE_NOTIFIER = "notifier";
+//    private final String VALUE_DEVICE_NOTIFIER = "google";
+//    private final String KEY_TOKEN_DEVICE = "regId";
     private Intent serviceIntent;
     private TextView txtLocation;
     private TextView txtWifi;
@@ -32,6 +46,11 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         dbHelper = new DatabaseHelper(this);
+        if (dbHelper.getRegData(KEY_NAME) == null) {
+            Intent configInten = new Intent(MainActivity.this, ConfigActivity.class);
+            configInten.putExtra("isFresh", true);
+            startActivity(configInten);
+        }
         List<String> location_list = dbHelper.getRecentLocations(MAX_ROW_SIZE);
         List<String> wifi_list = dbHelper.getRecentWifi(MAX_ROW_SIZE);
 
